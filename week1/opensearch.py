@@ -6,6 +6,9 @@ def get_opensearch():
     if 'opensearch' not in g:
         #### Step 4.a:
         # Implement a client connection to OpenSearch so that the rest of the application can communicate with OpenSearch
+        host = 'localhost'
+        port = 9200
+        auth = ('admin', 'admin')
         g.opensearch = OpenSearch(
             hosts=[{'host': host, 'port': port}],
             http_compress=True,  # enables gzip compression for request bodies
