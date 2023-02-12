@@ -113,17 +113,30 @@ def create_query(user_query, filters, sort="_score", sortDir="desc"):
         'size': 10,
         "query": {
             # Replace me with a query that both searches and filters
-            "bool": {
-                "must": [
-                    {
-                        "query_string": {
-                            "query": user_query,
-                            "fields": ["name^100", "shortDescription^50", "longDescription^10", "department"],
-                            "phrase_slop": 3
+            "function_score": {
+                "bool": {
+                    "must": [
+                        {
+                            "query_string": {
+                                "query": user_query,
+                                "fields": ["name^100", "shortDescription^50", "longDescription^10", "department"],
+                                "phrase_slop": 3
+                            }
                         }
+                    ],
+                    "filter": filters
+                },
+                "boost_mode": "replace",
+                "score_mode": "avg",
+                "functions": [
+                {
+                "field_value_factor": {
+                        "field": "salesRankLongTerm",
+                        "missing": 100000000,
+                        "modifier": "reciprocal"
                     }
-                ],
-                "filter": filters
+                }
+                ]
             }
         },
         "aggs": {
